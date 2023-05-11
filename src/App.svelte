@@ -1,14 +1,12 @@
 <script>
-  //10,5 tuntia varmasti ja voi olla muutama tuntia lisää
+  //13,5 tuntia varmasti ja voi olla muutama tuntia lisää
 
   //importattavat asiat
   import 'papercss/dist/paper.min.css';
   import Napit from './Napit.svelte';
   import Arvaukset from './Arvaukset.svelte';
   import { maat } from './Maat.js';
-  import { each, select_option } from 'svelte/internal';
-  import { scale, blur, fly } from 'svelte/transition';
-  import { createEventDispatcher } from 'svelte';
+  import { fade, fly } from 'svelte/transition';
   import Tilaa from './Tilaa.svelte';
 
   //muuttujat
@@ -116,6 +114,10 @@
     console.log(tilaajat);
     onkoTilannut = true;
     nayta = false;
+
+    setTimeout(() => {
+      onkoTilannut = false;
+    }, 10000);
   }
   //kun peli on loppunut näkyy uusi peli nappi
   //joka käynnistää uuden pelin
@@ -169,8 +171,9 @@
         x: 500,
       }}
     >
-      You lose
+      You lose <br /> The right awnser was {oikeaMaa}
     </h2>
+
     <p>You got {pisteet} points!</p>
     <Napit on:click={uusiKierros}>Try Again?</Napit>
     <p />
@@ -185,10 +188,19 @@
     <Tilaa on:sulje={() => (nayta = false)} on:lisaa={lisaa} />
   {/if}
 </main>
-<!--Jos tilataan lippu faktoja pelaajaa kiitetään-->
+<!--Jos tilataan lippu faktoja pelaajaa kiitetään ja viesti häviää 10 sekunnin jälkeen-->
 <footer>
   {#if onkoTilannut}
-    Thanks for subscribing!
+    <h3
+      in:fade|local={{
+        duration: 1000,
+      }}
+      out:fade|local={{
+        duration: 1000,
+      }}
+    >
+      Thanks for subscribing!
+    </h3>
   {/if}
 </footer>
 
@@ -196,5 +208,8 @@
   h2 {
     padding-top: 100px;
     color: red;
+  }
+  h3 {
+    color: green;
   }
 </style>
