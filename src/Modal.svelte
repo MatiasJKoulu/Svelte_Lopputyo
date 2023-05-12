@@ -24,9 +24,10 @@
   .modal {
     padding: 1rem;
     position: fixed;
-    top: 10vh;
-    left: 10vw;
-    width: 80%;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
     max-height: 80vh;
     background: white;
     border-radius: 5px;

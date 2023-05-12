@@ -69,11 +69,13 @@
         //tarkastetaan ettei tule 2 samaa nappia luotua
         //jos näin tapahtuu se antaa uuden maan kunnes se on eri kuin muut napit
         //kun on tarkastettu ettei ole toistuvia maita maa laitetaan rollatutMaat array:hyn
-        if (rollatutMaat.includes(valittu) || valittu == oikeaMaa) {
+        if (rollatutMaat.includes(valittu) || valittu === oikeaMaa) {
           let vanhaValittu = valittu;
 
-          while (valittu == vanhaValittu) {
+          while (valittu === vanhaValittu || valittu === oikeaMaa) {
+            console.log('vanha ' + valittu + ' ja ' + oikeaMaa);
             valittu = maat[Math.floor(Math.random() * (maat.length - 1))];
+            console.log('uusi ' + valittu + ' ja ' + oikeaMaa);
           }
           rollatutMaat.push(valittu);
         } else {
@@ -136,57 +138,59 @@
 
 <!--Itse peli-->
 <main>
-  <h1>Flag guessing game</h1>
-  {#if onkoPeliKaynnissa}
-    <div>
-      {#await haeMaaTiedot()}
-        <p>...waiting</p>
-      {:then MaaTiedot}
-        <p>Which countrys flag is this?</p>
-        <p style="font-size: 400%;">{lippu}</p>
+  <div>
+    <h1>Flag guessing game</h1>
+    {#if onkoPeliKaynnissa}
+      <div>
+        {#await haeMaaTiedot()}
+          <p>...waiting</p>
+        {:then MaaTiedot}
+          <p>Which countrys flag is this?</p>
+          <p style="font-size: 400%;">{lippu}</p>
 
-        {#each rollatutMaat as maa}
-          <Arvaukset arvaus={maa} on:voittiko={voittiko} />
-        {/each}
+          {#each rollatutMaat as maa}
+            <Arvaukset arvaus={maa} on:voittiko={voittiko} />
+          {/each}
 
-        <p>Points: {pisteet}</p>
-      {:catch error}
-        <p>An error occurred!</p>
-      {/await}
-    </div>
+          <p>Points: {pisteet}</p>
+        {:catch error}
+          <p>An error occurred!</p>
+        {/await}
+      </div>
 
-    <p />
-  {/if}
-  <!--Game over-->
-  {#if onkoGameOver}
-    <h2
-      in:fly|local={{
-        duration: 1000,
-        delay: 200,
-        x: 500,
-      }}
-      out:fly|local={{
-        duration: 1000,
-        delay: 200,
-        x: 500,
-      }}
-    >
-      You lose <br /> The right awnser was {oikeaMaa}
-    </h2>
+      <p />
+    {/if}
+    <!--Game over-->
+    {#if onkoGameOver}
+      <h2
+        in:fly|local={{
+          duration: 1000,
+          delay: 200,
+          x: 500,
+        }}
+        out:fly|local={{
+          duration: 1000,
+          delay: 200,
+          x: 500,
+        }}
+      >
+        You lose <br /> The right awnser was {oikeaMaa}
+      </h2>
 
-    <p>You got {pisteet} points!</p>
-    <Napit on:click={uusiKierros}>Try Again?</Napit>
-    <p />
-  {/if}
-  <!--Modaalin nappulat-->
-  {#if nayta}
-    <Napit on:click={naytaJutut}>Hide subscription</Napit>
-  {:else}
-    <Napit on:click={naytaJutut}>Subscribe for flag facts</Napit>
-  {/if}
-  {#if nayta}
-    <Tilaa on:sulje={() => (nayta = false)} on:lisaa={lisaa} />
-  {/if}
+      <p>You got {pisteet} points!</p>
+      <Napit on:click={uusiKierros}>Try Again?</Napit>
+      <p />
+    {/if}
+    <!--Modaalin nappulat-->
+    {#if nayta}
+      <Napit on:click={naytaJutut}>Hide subscription</Napit>
+    {:else}
+      <Napit on:click={naytaJutut}>Subscribe for flag facts</Napit>
+    {/if}
+    {#if nayta}
+      <Tilaa on:sulje={() => (nayta = false)} on:lisaa={lisaa} />
+    {/if}
+  </div>
 </main>
 <!--Jos tilataan lippu faktoja pelaajaa kiitetään ja viesti häviää 10 sekunnin jälkeen-->
 <footer>
@@ -211,5 +215,11 @@
   }
   h3 {
     color: green;
+  }
+  main,
+  footer {
+    text-align: center;
+    display: flex;
+    justify-content: center;
   }
 </style>
