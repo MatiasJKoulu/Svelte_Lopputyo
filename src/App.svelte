@@ -2,7 +2,7 @@
   //13,5 tuntia varmasti ja voi olla muutama tuntia lisää
 
   //importattavat asiat
-  import 'papercss/dist/paper.min.css';
+  export let name;
   import Napit from './Napit.svelte';
   import Arvaukset from './Arvaukset.svelte';
   import { maat } from './Maat.js';
@@ -136,6 +136,9 @@
   }
 </script>
 
+<svelte:head>
+  <title>{name}</title></svelte:head
+>
 <!--Itse peli-->
 <main>
   <div>
@@ -175,6 +178,7 @@
         }}
       >
         You lose <br /> The right awnser was {oikeaMaa}
+        {lippu}
       </h2>
 
       <p>You got {pisteet} points!</p>
