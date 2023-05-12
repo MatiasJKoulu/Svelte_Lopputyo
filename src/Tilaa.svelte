@@ -1,5 +1,5 @@
 <script>
-  //importaukset
+  //importaukset ja propit
   import Napit from './Napit.svelte';
   import Modal from './Modal.svelte';
   export let nimi = '';

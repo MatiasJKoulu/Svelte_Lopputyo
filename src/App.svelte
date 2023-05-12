@@ -1,7 +1,7 @@
 <script>
   //13,5 tuntia varmasti ja voi olla muutama tuntia lisää
 
-  //importattavat asiat
+  //importattavat asiat ja propit
   export let name;
   import Napit from './Napit.svelte';
   import Arvaukset from './Arvaukset.svelte';
