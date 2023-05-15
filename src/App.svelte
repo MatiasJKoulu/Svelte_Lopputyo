@@ -1,11 +1,9 @@
 <script>
-  //13,5 tuntia varmasti ja voi olla muutama tuntia lisää
-
   //importattavat asiat ja propit
   export let name;
   import Napit from './Napit.svelte';
   import Arvaukset from './Arvaukset.svelte';
-  import { maat } from './Maat.js';
+
   import { fade, fly } from 'svelte/transition';
   import Tilaa from './Tilaa.svelte';
 
@@ -27,7 +25,6 @@
   //funktiot
 
   //Haetaan restcountriesta euroopan maat joista arvotaan yksi oikea maa ja sen lippu
-  //samalla aktivoi RandomMaa funktion joka arvoo muut napit
   //Nämä haetaan uudestaan aina kun painetaan oikeaa nappia tai try again nappia
   const haeMaaTiedot = async () => {
     const response = await fetch(
@@ -35,37 +32,32 @@
     );
     let data = await response.json();
     let arvottuLuku = Math.floor(Math.random() * (data.length - 1) + 1);
-    oikeaMaa = data[arvottuLuku].name.common;
-    lippu = data[arvottuLuku].flag;
 
-    RandomMaa();
-    return data[arvottuLuku];
-  };
-
-  function RandomMaa() {
-    //valitsee minkä maan kyseiseen nappiin laitetaan
     valitseRandomi = ['y', 'n', 'n', 'n'];
     rollatutMaat = [];
+    oikeaMaa = data[arvottuLuku].name.common;
+    lippu = data[arvottuLuku].flag;
     for (let i = 0; i < 4; i++) {
       let a = Math.floor(Math.random() * valitseRandomi.length);
       let arvottuNappi = valitseRandomi.splice(a, 1);
       //ottaa valitseRandomi:sta joko y (kyllä oikea vastaus) n (ei oikea vastaus)
       //ja poistaa valitun ettei sitä voida antaa uudestaan
       //kun koodi kutsutaan se resettaa
-      let arvottuLuku = Math.floor(Math.random() * (maat.length - 1) + 1);
+      let arvottuLuku = Math.floor(Math.random() * (data.length - 1) + 1);
 
-      valittu = maat[arvottuLuku];
-      maat.slice(arvottuLuku, arvottuLuku + 1);
+      data.slice(arvottuLuku, arvottuLuku + 1);
 
       if (arvottuNappi == 'y') {
         rollatutMaat.push(oikeaMaa);
-        //arvottuNappi on mitä valitseRandomi antaa
-        //ja jos se on y se työntää oikean maan rollatutMaat arrayhyn
-        //josta otetaan nappien sisältö ja niiden järjestys
+        //oikeaMaa arvotaan jo aikaisemmin koodissa ja pushattaan Rollatutmaat silloin kun arvottuNappi antaa Y:n
+        //että saisimme satunnaisen järjestyksen
+        //RollatutMaat muuttujasta otetaan nappien sisältö ja niiden järjestys
       }
       if (arvottuNappi == 'n') {
+        valittu = data[arvottuLuku].name.common;
+
         //Ja jos arvottuNappi on n
-        //Arvotaan Maat.js:stä vääriä nappeja
+        //Arvotaan restcountriesta vääriä nappeja
         //tarkastetaan ettei tule 2 samaa nappia luotua
         //jos näin tapahtuu se antaa uuden maan kunnes se on eri kuin muut napit
         //kun on tarkastettu ettei ole toistuvia maita maa laitetaan rollatutMaat array:hyn
@@ -73,17 +65,18 @@
           let vanhaValittu = valittu;
 
           while (valittu === vanhaValittu || valittu === oikeaMaa) {
-            console.log('vanha ' + valittu + ' ja ' + oikeaMaa);
-            valittu = maat[Math.floor(Math.random() * (maat.length - 1))];
-            console.log('uusi ' + valittu + ' ja ' + oikeaMaa);
+            valittu =
+              data[Math.floor(Math.random() * (data.length - 1))].name.common;
           }
           rollatutMaat.push(valittu);
         } else {
-          rollatutMaat.push(maat[arvottuLuku]);
+          rollatutMaat.push(data[arvottuLuku].name.common);
         }
       }
     }
-  }
+    return data[arvottuLuku];
+  };
+
   //tarkistaa painoitko oikeaa vai väärää nappia
   //jos painoit oikeaa se antaa uudet maat ja lipun
   //jos painoit väärää se peli loppuu ja tule gameOver tila
@@ -93,7 +86,6 @@
     if (ce.detail == oikeaMaa) {
       pisteet++;
       haeMaaTiedot();
-      RandomMaa();
     }
     if (ce.detail !== oikeaMaa) {
       onkoPeliKaynnissa = false;
@@ -131,7 +123,6 @@
     setTimeout(() => {
       onkoPeliKaynnissa = true;
       haeMaaTiedot();
-      RandomMaa();
     }, 1200);
   }
 </script>

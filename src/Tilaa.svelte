@@ -8,6 +8,7 @@
   const dispatch = createEventDispatcher();
   const sulje = () => dispatch('sulje');
   const lisaa = () => dispatch('lisaa', { nimi: nimi });
+  let eka = true;
   //funktiot
   //tarkastaa onko sähköposti oikea tarkastamalla sisältääkö tekstiä, @ merkin, .com tai .fi ja ei sisällä välejä
   //ja palauttaa true tai false
@@ -35,10 +36,15 @@
   </div>
 
   Email:
-  <input type="text" bind:value={nimi} />
+  <input
+    type="text"
+    placeholder="Example@Email.com"
+    on:blur={() => (eka = false)}
+    bind:value={nimi}
+  />
 
   <div slot="footer">
-    {#if (nimi.length > 0 && nimi.includes('@') && nimi.includes('.com') && !nimi.includes(' ')) || (nimi.length > 0 && nimi.includes('@') && nimi.includes('.fi') && !nimi.includes(' '))}
+    {#if (nimi.length > 0 && nimi.includes('@') && nimi.includes('.com') && !nimi.includes(' ')) || (nimi.length > 0 && nimi.includes('@') && nimi.includes('.fi') && !nimi.includes(' ')) || eka}
       <Napit kaytossa on:click={lisaa}>Subscribe</Napit>
     {:else}
       <p>Check that the Email is valid!</p>
@@ -52,5 +58,10 @@
 <style>
   p {
     color: red;
+  }
+  button {
+    background-color: white;
+    border-radius: 10px;
+    margin-left: 5px;
   }
 </style>
